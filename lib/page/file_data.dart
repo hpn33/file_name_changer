@@ -13,7 +13,7 @@ class FileData {
 
   final subs = <FileData>[];
   final selected = ValueNotifier(false);
-  // final useDir = ValueNotifier(false);
+  final useDir = ValueNotifier(true);
 
   void exploreSub() {
     final dir = Directory(entity.path);
@@ -30,9 +30,9 @@ class FileData {
   }
 
   void changeFileNameToFolderName() {
-    // if (!useDir.value) {
-    //   return;
-    // }
+    if (!useDir.value) {
+      return;
+    }
 
     for (final sub in subs) {
       final path = (sub.entity.path.split('\\')..removeLast()).join('\\');

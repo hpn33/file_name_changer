@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -73,29 +74,54 @@ class HomePage extends HookWidget {
 
   Widget levelOneCard(FileData fileData) {
     if (fileData.type == FileSystemEntityType.directory) {
-      return Column(
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [Text(fileData.entity.path.toString())],
-              ),
-            ),
-          ),
-          Row(
+      return HookBuilder(
+        builder: (context) {
+          useListenable(fileData.useDir);
+
+          return Column(
             children: [
-              for (final sub in fileData.subs) getFileCard(sub),
+              Card(
+                child: InkWell(
+                  onTap: () {
+                    fileData.useDir.value = !fileData.useDir.value;
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          fileData.entity.path.toString(),
+                          style: fileData.useDir.value
+                              ? null
+                              : const TextStyle(
+                                  color: Colors.grey,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  for (final sub in fileData.subs)
+                    Opacity(
+                      opacity: fileData.useDir.value ? 1 : .3,
+                      child: getFileCard(sub, fileData.useDir.value),
+                    ),
+                ],
+              ),
             ],
-          ),
-        ],
+          );
+        },
       );
     }
 
     return Text(fileData.entity.toString());
   }
 
-  Widget getFileCard(FileData sub) {
+  Widget getFileCard(FileData sub, bool useDir) {
     if (sub.passfix == 'jpg') {
       return HookBuilder(
         builder: (context) {
@@ -106,9 +132,9 @@ class HomePage extends HookWidget {
             child: SizedBox(
               width: 150,
               child: InkWell(
-                onTap: () {
-                  sub.selected.value = !sub.selected.value;
-                },
+                onTap: useDir
+                    ? () => sub.selected.value = !sub.selected.value
+                    : null,
                 child: Stack(
                   children: [
                     Column(
