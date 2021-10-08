@@ -2,13 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-class FileData {
+class FileData extends ChangeNotifier {
   final FileSystemEntity entity;
+  final FileData? parent;
 
-  FileData(this.entity);
+  FileData(this.entity, {this.parent}) {
+    selected.addListener(() {
+      if (parent != null) {
+        parent?.notifyListeners();
+      }
+    });
+  }
 
   FileSystemEntityType get type => entity.statSync().type;
   String get name => entity.path.split('\\').last;
+  String get folderName => '\\' + entity.path.split('\\').last;
   String get passfix => entity.path.split('.').last;
 
   final subs = <FileData>[];
@@ -24,7 +32,7 @@ class FileData {
 
     dir.listSync().forEach((sub) {
       if (sub.statSync().type == FileSystemEntityType.file) {
-        subs.add(FileData(sub));
+        subs.add(FileData(sub, parent: this));
       }
     });
   }
