@@ -19,6 +19,7 @@ class HomePage extends HookWidget {
       child: Column(
         children: [
           appBar(manager),
+          selectedMenu(manager),
           detailView(manager),
         ],
       ),
@@ -49,7 +50,7 @@ class HomePage extends HookWidget {
 
   Widget appBar(Manager manager) {
     useListenable(manager);
-    print(manager.assets.value.where((element) => element.useDir.value).length);
+
     return Material(
       child: Row(
         children: [
@@ -77,6 +78,29 @@ class HomePage extends HookWidget {
           ElevatedButton(
             onPressed: () => manager.changeFileNames(),
             child: const Text('run Process ( change file Name )'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget selectedMenu(Manager manager) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+      child: Row(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              manager.selectAll();
+            },
+            child: const Text('select All'),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () {
+              manager.deselectAll();
+            },
+            child: const Text('diselect All'),
           ),
         ],
       ),

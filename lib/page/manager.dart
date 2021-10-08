@@ -35,4 +35,16 @@ class Manager extends ChangeNotifier {
       element.changeFileNameToFolderName();
     }
   }
+
+  void selectAll() {
+    for (var element in assets.value) {
+      element.useDir.value = true;
+    }
+  }
+
+  void deselectAll() {
+    for (var element in assets.value) {
+      element.useDir.value = false;
+    }
+  }
 }
