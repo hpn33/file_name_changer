@@ -48,7 +48,7 @@ class FileData extends ChangeNotifier {
   }
 
   void changeFileNameToFolderName() {
-    if (!useDir.value && !hasConditionOfChangeName) {
+    if (!useDir.value || !hasConditionOfChangeName) {
       return;
     }
 
