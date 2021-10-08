@@ -65,18 +65,15 @@ class HomePage extends HookWidget {
           Center(child: Text(manager.path.value)),
           const Spacer(),
           Text(
-            manager.assets.value.length.toString() +
+            manager.countOfAll.toString() +
                 '|' +
-                manager.assets.value
-                    .where((element) =>
-                        element.useDir.value &&
-                        element.hasConditionOfChangeName)
-                    .length
-                    .toString(),
+                manager.countOfCondida.toString(),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
-            onPressed: () => manager.changeFileNames(),
+            onPressed: manager.countOfCondida != 0
+                ? () => manager.changeFileNames()
+                : null,
             child: const Text('run Process ( change file Name )'),
           ),
         ],

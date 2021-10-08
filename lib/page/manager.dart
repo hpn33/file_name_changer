@@ -8,6 +8,12 @@ class Manager extends ChangeNotifier {
   final path = ValueNotifier('.');
   final assets = ValueNotifier(<FileData>[]);
 
+  int get countOfAll => assets.value.length;
+  int get countOfCondida => assets.value
+      .where(
+          (element) => element.useDir.value && element.hasConditionOfChangeName)
+      .length;
+
   Manager() {
     path.addListener(_explorDir);
 
