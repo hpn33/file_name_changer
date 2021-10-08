@@ -18,6 +18,7 @@ class HomePage extends HookWidget {
     }, []);
 
     return Material(
+      color: Colors.grey,
       child: Column(
         children: [
           appBar(manager),
@@ -47,23 +48,25 @@ class HomePage extends HookWidget {
   Widget appBar(Manager manager) {
     useListenable(manager.path);
 
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.folder_open),
-          onPressed: () {
-            FilePicker.platform
-                .getDirectoryPath()
-                .then((value) => manager.setPath(value));
-          },
-        ),
-        Center(child: Text(manager.path.value)),
-        const Spacer(),
-        TextButton(
-          onPressed: () => manager.changeFileNames(),
-          child: const Text('run Process ( change file Name )'),
-        ),
-      ],
+    return Material(
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.folder_open),
+            onPressed: () {
+              FilePicker.platform
+                  .getDirectoryPath()
+                  .then((value) => manager.setPath(value));
+            },
+          ),
+          Center(child: Text(manager.path.value)),
+          const Spacer(),
+          ElevatedButton(
+            onPressed: () => manager.changeFileNames(),
+            child: const Text('run Process ( change file Name )'),
+          ),
+        ],
+      ),
     );
   }
 
