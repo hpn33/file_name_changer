@@ -19,11 +19,19 @@ class FileData extends ChangeNotifier {
   String get folderName => '\\' + entity.path.split('\\').last;
   String get passfix => entity.path.split('.').last;
 
+  bool get hasJustTwoSub => subs.length == 2;
+  bool get hasJustOneSelected =>
+      subs.where((element) => element.selected.value).length == 1;
+
+  bool get hasConditionOfChangeName => hasJustTwoSub && hasJustOneSelected;
+
   final subs = <FileData>[];
   final selected = ValueNotifier(false);
   final useDir = ValueNotifier(true);
 
   void exploreSub() {
+    subs.clear();
+
     final dir = Directory(entity.path);
 
     if (!dir.isAbsolute) {
@@ -35,10 +43,12 @@ class FileData extends ChangeNotifier {
         subs.add(FileData(sub, parent: this));
       }
     });
+
+    notifyListeners();
   }
 
   void changeFileNameToFolderName() {
-    if (!useDir.value) {
+    if (!useDir.value && !hasConditionOfChangeName) {
       return;
     }
 
@@ -56,5 +66,7 @@ class FileData extends ChangeNotifier {
 
       sub.entity.renameSync(newName);
     }
+
+    exploreSub();
   }
 }

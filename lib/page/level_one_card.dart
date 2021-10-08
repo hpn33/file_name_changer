@@ -18,6 +18,7 @@ class LevelOneCard extends HookWidget {
     if (fileData.type == FileSystemEntityType.directory) {
       return HookBuilder(
         builder: (context) {
+          useListenable(fileData);
           useListenable(fileData.useDir);
 
           return Opacity(
@@ -35,6 +36,7 @@ class LevelOneCard extends HookWidget {
                             getFileCard(sub, fileData.useDir.value),
                         ],
                       ),
+                      if (fileData.useDir.value) bottomBar(),
                     ],
                   ),
                 ),
@@ -88,8 +90,23 @@ class LevelOneCard extends HookWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 5),
-            Row(
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget bottomBar() {
+    return HookBuilder(builder: (context) {
+      useListenable(fileData);
+
+      return Column(
+        children: [
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
                   '* file count should be 2/' + fileData.subs.length.toString(),
@@ -101,28 +118,30 @@ class LevelOneCard extends HookWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                HookBuilder(builder: (context) {
-                  useListenable(fileData);
-
-                  return Text(
-                    '* just one file should be selected',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color:
-                          fileData.subs.where((e) => e.selected.value).length ==
-                                  1
-                              ? Colors.green
-                              : Colors.grey,
-                    ),
-                  );
-                }),
+                Text(
+                  '* just one file should be selected',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color:
+                        fileData.subs.where((e) => e.selected.value).length == 1
+                            ? Colors.green
+                            : Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: 15),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: fileData.hasConditionOfChangeName
+                      ? () => fileData.changeFileNameToFolderName()
+                      : null,
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ],
+      );
+    });
   }
 
   Widget getFileCard(FileData sub, bool useDir) {

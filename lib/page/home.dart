@@ -14,10 +14,6 @@ class HomePage extends HookWidget {
   Widget build(BuildContext context) {
     final manager = useState(Manager()).value;
 
-    useEffect(() {
-      manager.init();
-    }, []);
-
     return Material(
       color: Colors.grey,
       child: Column(
