@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'file_data.dart';
+import 'manager.dart';
 
 class HomePage extends HookWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -84,14 +85,7 @@ class HomePage extends HookWidget {
           ),
           Row(
             children: [
-              for (final sub in fileData.subs)
-                Card(
-                  margin: const EdgeInsets.all(8),
-                  child: SizedBox(
-                    width: 150,
-                    child: Text(sub.entity.toString()),
-                  ),
-                ),
+              for (final sub in fileData.subs) getFileCard(sub),
             ],
           ),
         ],
@@ -100,39 +94,54 @@ class HomePage extends HookWidget {
 
     return Text(fileData.entity.toString());
   }
-}
 
-class Manager {
-  final path = ValueNotifier('.');
-  final assets = ValueNotifier(<FileData>[]);
+  Widget getFileCard(FileData sub) {
+    if (sub.passfix == 'jpg') {
+      return HookBuilder(
+        builder: (context) {
+          useListenable(sub.selected);
 
-  Manager() {
-    path.addListener(_explorDir);
-  }
-
-  void _explorDir() {
-    assets.value = [];
-
-    final dir = Directory(path.value);
-
-    dir.listSync().forEach((i) {
-      assets.value = [...assets.value, FileData(i)..exploreSub()];
-    });
-  }
-
-  void setPath(String? pth) {
-    if (pth != null) {
-      path.value = pth;
+          return Card(
+            margin: const EdgeInsets.all(8),
+            child: SizedBox(
+              width: 150,
+              child: InkWell(
+                onTap: () {
+                  sub.selected.value = !sub.selected.value;
+                },
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        Image.file(File(sub.entity.path)),
+                        Text(sub.name),
+                      ],
+                    ),
+                    if (sub.selected.value)
+                      Positioned(
+                        bottom: 5,
+                        right: 5,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          color: Colors.red,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
     }
+
+    return Card(
+      margin: const EdgeInsets.all(8),
+      child: SizedBox(
+        width: 150,
+        child: Text(sub.name),
+      ),
+    );
   }
-
-  void changeFileNames() {
-    for (var element in assets.value) {
-      element.changeFileNameToFolderName();
-    }
-
-    _explorDir();
-  }
-
-  void init() => _explorDir();
 }

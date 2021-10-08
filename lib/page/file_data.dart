@@ -1,13 +1,18 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 class FileData {
   final FileSystemEntity entity;
 
   FileData(this.entity);
 
   FileSystemEntityType get type => entity.statSync().type;
+  String get name => entity.path.split('\\').last;
+  String get passfix => entity.path.split('.').last;
 
   final subs = <FileData>[];
+  final selected = ValueNotifier(false);
 
   void exploreSub() {
     final dir = Directory(entity.path);
