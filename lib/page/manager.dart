@@ -30,6 +30,11 @@ class Manager {
 
   void changeFileNames() {
     for (var element in assets.value) {
+      if (element.subs.length != 2 &&
+          element.subs.where((element) => element.selected.value).length != 1) {
+        continue;
+      }
+
       element.changeFileNameToFolderName();
     }
 
