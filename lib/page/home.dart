@@ -4,68 +4,67 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import 'file_data.dart';
+
 class HomePage extends HookWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final path = useState('.');
-    final assets = useState(<FileData>[]);
+    final manager = useState(Manager()).value;
 
     useEffect(() {
-      getAssetsOnDirect(path.value, assets);
+      manager.init();
     }, []);
 
     return Material(
       child: Column(
         children: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.folder_open),
-                onPressed: () {
-                  // FilePicker.platform
-                  //     .pickFiles()
-                  //     .then((value) => path.value = value!.files.toString());
-
-                  FilePicker.platform.getDirectoryPath().then((value) {
-                    path.value = value ?? '.';
-
-                    getAssetsOnDirect(path.value, assets);
-                  });
-                },
-              ),
-              Center(child: Text(path.value)),
-            ],
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    for (final i in assets.value) levelOneCard(i),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          appBar(manager),
+          detailView(manager),
         ],
       ),
     );
   }
 
-  void getAssetsOnDirect(
-    String path,
-    ValueNotifier<List<FileData>> assets,
-  ) {
-    assets.value = [];
+  Expanded detailView(Manager manager) {
+    useListenable(manager.assets);
 
-    final dir = Directory(path);
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              for (final i in manager.assets.value) levelOneCard(i),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-    dir.listSync().forEach((i) {
-      assets.value = [...assets.value, FileData(i)..exploreSub()];
-    });
+  Widget appBar(Manager manager) {
+    useListenable(manager.path);
+
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.folder_open),
+          onPressed: () {
+            FilePicker.platform
+                .getDirectoryPath()
+                .then((value) => manager.setPath(value));
+          },
+        ),
+        Center(child: Text(manager.path.value)),
+        const Spacer(),
+        TextButton(
+          onPressed: () => manager.changeFileNames(),
+          child: const Text('run Process ( change file Name )'),
+        ),
+      ],
+    );
   }
 
   Widget levelOneCard(FileData fileData) {
@@ -100,20 +99,37 @@ class HomePage extends HookWidget {
   }
 }
 
-class FileData {
-  final FileSystemEntity entity;
+class Manager {
+  final path = ValueNotifier('.');
+  final assets = ValueNotifier(<FileData>[]);
 
-  FileData(this.entity);
+  Manager() {
+    path.addListener(_explorDir);
+  }
 
-  FileSystemEntityType get type => entity.statSync().type;
+  void _explorDir() {
+    assets.value = [];
 
-  final subs = <FileData>[];
-
-  void exploreSub() {
-    final dir = Directory(entity.path);
+    final dir = Directory(path.value);
 
     dir.listSync().forEach((i) {
-      if (i.statSync().type == FileSystemEntityType.file) subs.add(FileData(i));
+      assets.value = [...assets.value, FileData(i)..exploreSub()];
     });
   }
+
+  void setPath(String? pth) {
+    if (pth != null) {
+      path.value = pth;
+    }
+  }
+
+  void changeFileNames() {
+    for (var element in assets.value) {
+      element.changeFileNameToFolderName();
+    }
+
+    _explorDir();
+  }
+
+  void init() => _explorDir();
 }
