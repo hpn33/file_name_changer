@@ -13,6 +13,7 @@ class FileData {
 
   final subs = <FileData>[];
   final selected = ValueNotifier(false);
+  // final useDir = ValueNotifier(false);
 
   void exploreSub() {
     final dir = Directory(entity.path);
@@ -29,18 +30,23 @@ class FileData {
   }
 
   void changeFileNameToFolderName() {
-    var i = 0;
+    // if (!useDir.value) {
+    //   return;
+    // }
 
     for (final sub in subs) {
       final path = (sub.entity.path.split('\\')..removeLast()).join('\\');
       final folderName = entity.path.split('\\').last;
       final passfix = sub.entity.path.split('.').last;
 
-      final newName = path + "\\" + folderName + '-$i' + '.' + passfix;
+      final newName = path +
+          "\\" +
+          (sub.selected.value ? 'c' : '') +
+          folderName +
+          '.' +
+          passfix;
 
       sub.entity.renameSync(newName);
-
-      i++;
     }
   }
 }
