@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'file_data.dart';
 
-class Manager {
+class Manager extends ChangeNotifier {
   final path = ValueNotifier('.');
   final assets = ValueNotifier(<FileData>[]);
 
@@ -20,7 +20,7 @@ class Manager {
     final dir = Directory(path.value);
 
     dir.listSync().forEach((i) {
-      assets.value = [...assets.value, FileData(i)..exploreSub()];
+      assets.value = [...assets.value, FileData(i, this)..exploreSub()];
     });
   }
 

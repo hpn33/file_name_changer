@@ -1,13 +1,25 @@
 import 'dart:io';
 
+import 'package:file_name_changer/page/manager.dart';
 import 'package:flutter/foundation.dart';
 
 class FileData extends ChangeNotifier {
   final FileSystemEntity entity;
   final FileData? parent;
+  final Manager manager;
 
-  FileData(this.entity, {this.parent}) {
+  FileData(this.entity, this.manager, {this.parent}) {
     selected.addListener(() {
+      manager.notifyListeners();
+
+      if (parent != null) {
+        parent?.notifyListeners();
+      }
+    });
+
+    useDir.addListener(() {
+      manager.notifyListeners();
+
       if (parent != null) {
         parent?.notifyListeners();
       }
@@ -40,7 +52,7 @@ class FileData extends ChangeNotifier {
 
     dir.listSync().forEach((sub) {
       if (sub.statSync().type == FileSystemEntityType.file) {
-        subs.add(FileData(sub, parent: this));
+        subs.add(FileData(sub, manager, parent: this));
       }
     });
 

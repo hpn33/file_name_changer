@@ -48,8 +48,8 @@ class HomePage extends HookWidget {
   }
 
   Widget appBar(Manager manager) {
-    useListenable(manager.path);
-
+    useListenable(manager);
+    print(manager.assets.value.where((element) => element.useDir.value).length);
     return Material(
       child: Row(
         children: [
@@ -63,6 +63,17 @@ class HomePage extends HookWidget {
           ),
           Center(child: Text(manager.path.value)),
           const Spacer(),
+          Text(
+            manager.assets.value.length.toString() +
+                '|' +
+                manager.assets.value
+                    .where((element) =>
+                        element.useDir.value &&
+                        element.hasConditionOfChangeName)
+                    .length
+                    .toString(),
+          ),
+          const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () => manager.changeFileNames(),
             child: const Text('run Process ( change file Name )'),
