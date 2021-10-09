@@ -36,7 +36,8 @@ class HomePage extends HookWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
-              child: Column(
+              physics: const BouncingScrollPhysics(),
+              child: Wrap(
                 children: [
                   for (final i in manager.assets.value) LevelOneCard(i),
                 ],

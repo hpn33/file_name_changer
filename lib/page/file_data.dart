@@ -51,9 +51,15 @@ class FileData extends ChangeNotifier {
     }
 
     dir.listSync().forEach((sub) {
-      if (sub.statSync().type == FileSystemEntityType.file) {
-        subs.add(FileData(sub, manager, parent: this));
+      if (sub.statSync().type != FileSystemEntityType.file) {
+        return;
       }
+
+      if (sub.path.split('.').last != 'jpg') {
+        return;
+      }
+
+      subs.add(FileData(sub, manager, parent: this));
     });
 
     notifyListeners();

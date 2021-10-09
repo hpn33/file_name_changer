@@ -21,44 +21,47 @@ class LevelOneCard extends HookWidget {
           useListenable(fileData);
           useListenable(fileData.useDir);
 
-          return Opacity(
-            opacity: fileData.useDir.value ? 1 : .6,
-            child: Stack(
-              children: [
-                Card(
-                  child: Column(
-                    children: [
-                      topBar(),
-                      const Divider(),
-                      Row(
-                        children: [
-                          for (final sub in fileData.subs)
-                            getFileCard(sub, fileData.useDir.value),
-                        ],
-                      ),
-                      if (fileData.useDir.value) bottomBar(),
-                    ],
+          return SizedBox(
+            width: 300,
+            child: Opacity(
+              opacity: fileData.useDir.value ? 1 : .6,
+              child: Stack(
+                children: [
+                  Card(
+                    child: Column(
+                      children: [
+                        topBar(),
+                        const Divider(),
+                        Row(
+                          children: [
+                            for (final sub in fileData.subs)
+                              getFileCard(sub, fileData.useDir.value),
+                          ],
+                        ),
+                        if (fileData.useDir.value) bottomBar(),
+                      ],
+                    ),
                   ),
-                ),
-                if (!fileData.useDir.value)
-                  Positioned.fill(
-                    child: InkWell(
-                      onTap: () {
-                        fileData.useDir.value = !fileData.useDir.value;
-                      },
-                      child: const Center(
-                        child: Text(
-                          'reuse',
-                          style: TextStyle(
-                            fontSize: 64,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.pink,
+                  if (!fileData.useDir.value)
+                    Positioned.fill(
+                      child: InkWell(
+                        onTap: () {
+                          fileData.useDir.value = !fileData.useDir.value;
+                        },
+                        child: const Center(
+                          child: Text(
+                            'reuse',
+                            style: TextStyle(
+                              fontSize: 64,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.pink,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -74,21 +77,17 @@ class LevelOneCard extends HookWidget {
           ? () => fileData.useDir.value = !fileData.useDir.value
           : null,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        padding: const EdgeInsets.all(4.0),
+        child: Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  fileData.folderName,
-                  style: fileData.useDir.value
-                      ? null
-                      : const TextStyle(
-                          color: Colors.grey,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                ),
-              ],
+            Text(
+              fileData.folderName,
+              style: fileData.useDir.value
+                  ? null
+                  : const TextStyle(
+                      color: Colors.grey,
+                      decoration: TextDecoration.lineThrough,
+                    ),
             ),
           ],
         ),
@@ -104,12 +103,12 @@ class LevelOneCard extends HookWidget {
         children: [
           const Divider(),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(4.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  '* file count should be 2/' + fileData.subs.length.toString(),
+                  '* file count 2/' + fileData.subs.length.toString(),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -119,7 +118,7 @@ class LevelOneCard extends HookWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '* just one file should be selected',
+                  '* one file selected',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -155,7 +154,7 @@ class LevelOneCard extends HookWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(7),
               child: SizedBox(
-                width: useDir ? 150 : 70,
+                width: useDir ? 80 : 45,
                 child: InkWell(
                   onTap: useDir
                       ? () => sub.selected.value = !sub.selected.value
